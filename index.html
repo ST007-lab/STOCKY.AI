@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock AI Predictor</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: #16213e; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 350px; text-align: center; }
+        input { width: 80%; padding: 10px; border-radius: 5px; border: none; margin-bottom: 20px; font-size: 16px; }
+        button { background: #e94560; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #ff4d6d; }
+        #result { margin-top: 20px; font-size: 1.2em; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Stock AI Bot</h2>
+        <input type="text" id="ticker" placeholder="Enter Ticker (e.g. AAPL)">
+        <button onclick="sendData()">Predict Direction</button>
+        <div id="result">Waiting for input...</div>
+    </div>
+
+    <script>
+        async function sendData() {
+            const ticker = document.getElementById('ticker').value;
+            document.getElementById('result').innerHTML = "Analyzing...";
+            
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ticker: ticker})
+            });
+            
+            const data = await response.json();
+            if (data.error) {
+                document.getElementById('result').innerHTML = "Error: " + data.error;
+            } else {
+                document.getElementById('result').innerHTML = 
+                    `Price: $${data.price}<br>Result: ${data.prediction}`;
+            }
+        }
+    </script>
+</body>
+</html>
